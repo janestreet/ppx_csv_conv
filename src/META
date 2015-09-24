@@ -1,0 +1,8 @@
+version = "113.09.00"
+description = "Generate functions to read/write records in csv format"
+requires = "compiler-libs ppx_core ppx_driver ppx_type_conv ppx_conv_func ppx_deriving"
+archive(ppx_driver, byte          ) = "ppx_csv_conv.cma"
+archive(ppx_driver, native        ) = "ppx_csv_conv.cmxa"
+archive(ppx_driver, native, plugin) = "ppx_csv_conv.cmxs"
+exists_if = "ppx_csv_conv.cma"
+ppxopt(-ppx_driver) = "ppx_deriving,./ppx_csv_conv.cma"
