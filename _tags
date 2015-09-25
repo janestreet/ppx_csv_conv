@@ -1,4 +1,27 @@
     <**/*.ml{,i}>: warn(-40)
 # OASIS_START
+# DO NOT EDIT (digest: 7a40421a6e6576dc7d8ae008f4545687)
+# Ignore VCS directories, you can use the same kind of rule outside
+# OASIS_START/STOP if you want to exclude directories that contains
+# useless stuff for the build process
+true: annot, bin_annot
+<**/.svn>: -traverse
+<**/.svn>: not_hygienic
+".bzr": -traverse
+".bzr": not_hygienic
+".hg": -traverse
+".hg": not_hygienic
+".git": -traverse
+".git": not_hygienic
+"_darcs": -traverse
+"_darcs": not_hygienic
+# Library ppx_csv_conv
+"src/ppx_csv_conv.cmxs": use_ppx_csv_conv
+<src/*.ml{,i,y}>: package(compiler-libs)
+<src/*.ml{,i,y}>: package(ppx_conv_func)
+<src/*.ml{,i,y}>: package(ppx_core)
+<src/*.ml{,i,y}>: package(ppx_driver)
+<src/*.ml{,i,y}>: package(ppx_tools.metaquot)
+<src/*.ml{,i,y}>: package(ppx_type_conv)
 # OASIS_STOP
     <src/*>: linkall
