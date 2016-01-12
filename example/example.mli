@@ -4,6 +4,5 @@ type t = {
   a : float;
   b : string;
   c : int;
-  e : Date.t;
+  d : Date.t;
 } [@@deriving csv, fields]
-

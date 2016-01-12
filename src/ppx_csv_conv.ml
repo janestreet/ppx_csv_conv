@@ -214,7 +214,7 @@ let csv_record_sig loc ~record_name =
                 )
             ]))
   in
-  Type_conv.Generator_result.make_just_after [st]
+  [st]
 ;;
 
 let rev_csv_header' ~lds loc =
@@ -309,7 +309,7 @@ let csv_record ~tps:_ ~record_name loc lds =
                (pmty_ident ~loc (Located.lident ~loc "Csvfields.Csv.Csvable"))
                with_constraints)))
   in
-  Type_conv.Generator_result.make_just_after [st]
+  [st]
 ;;
 
 let () =
