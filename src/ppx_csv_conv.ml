@@ -111,9 +111,9 @@ module Type_of_csv_row =
   end)
 
 module type B = sig
-  val writer   : Location.t -> label * expression
-  val is_first : Location.t -> label * expression
-  val is_last  : Location.t -> label * expression
+  val writer   : Location.t -> arg_label * expression
+  val is_first : Location.t -> arg_label * expression
+  val is_last  : Location.t -> arg_label * expression
 end
 
 module Make_row_of (S : B) = struct
@@ -172,30 +172,30 @@ let falseexpr loc = [%expr false]
 
 module Unique_row_of =
   Ppx_conv_func.Of_complete (Make_row_of (struct
-    let writer   loc = ("writer"  , [%expr writer   ])
-    let is_first loc = ("is_first", [%expr is_first ])
-    let is_last  loc = ("is_last" , [%expr is_last  ])
+    let writer   loc = (Labelled "writer"  , [%expr writer   ])
+    let is_first loc = (Labelled "is_first", [%expr is_first ])
+    let is_last  loc = (Labelled "is_last" , [%expr is_last  ])
 end))
 
 module First_row_of =
   Ppx_conv_func.Of_complete (Make_row_of (struct
-    let writer   loc = ("writer"  , [%expr writer   ])
-    let is_first loc = ("is_first", [%expr is_first ])
-    let is_last  loc = ("is_last" , falseexpr loc    )
+    let writer   loc = (Labelled "writer"  , [%expr writer   ])
+    let is_first loc = (Labelled "is_first", [%expr is_first ])
+    let is_last  loc = (Labelled "is_last" , falseexpr loc    )
   end))
 
 module Middle_row_of =
   Ppx_conv_func.Of_complete (Make_row_of (struct
-    let writer   loc = ("writer"  , [%expr writer ])
-    let is_first loc = ("is_first", falseexpr loc  )
-    let is_last  loc = ("is_last" , falseexpr loc  )
+    let writer   loc = (Labelled "writer"  , [%expr writer ])
+    let is_first loc = (Labelled "is_first", falseexpr loc  )
+    let is_last  loc = (Labelled "is_last" , falseexpr loc  )
   end))
 
 module Last_row_of =
   Ppx_conv_func.Of_complete (Make_row_of (struct
-    let writer   loc = ("writer"  , [%expr writer ])
-    let is_first loc = ("is_first", falseexpr loc  )
-    let is_last  loc = ("is_last" , [%expr is_last  ])
+    let writer   loc = (Labelled "writer"  , [%expr writer ])
+    let is_first loc = (Labelled "is_first", falseexpr loc  )
+    let is_last  loc = (Labelled "is_last" , [%expr is_last  ])
   end))
 
 let csv_record_sig loc ~record_name =
