@@ -1,11 +1,6 @@
-open! StdLabels
-open Ppx_core.Std
-open Asttypes
-open Parsetree
+open Ppx_core
 open Ast_builder.Default
 open Ppx_type_conv.Std
-
-[@@@metaloc loc]
 
 let extension_name = "csv"
 let unsupported_type_error_msg ~name =
@@ -15,10 +10,10 @@ let useless_merge_recursive _log ~field_name:_ ~tp:_ ast = ast
 
 let edot ~loc path_opt id =
   pexp_ident ~loc
-    (Located.mk ~loc @@
-     match path_opt with
-     | None   -> Longident.Lident id
-     | Some p -> Longident.Ldot (p, id))
+    (Located.mk ~loc
+     (match path_opt with
+       | None   -> Longident.Lident id
+       | Some p -> Longident.Ldot (p, id)))
 
 (** Generate the list of fields contained in a flattened record type *)
 module Rev_headers =
@@ -245,7 +240,7 @@ let row_of_t' ~record_name ~lds loc =
         [%e body]
     ]
   in
-  let name = pvar ~loc @@  "write_row_of_" ^ record_name ^ "'" in
+  let name = pvar ~loc ("write_row_of_" ^ record_name ^ "'") in
   [%stri let [%p name] = [%e func] ]
 
 let t_of_row' ~record_name ~lds loc =
@@ -259,7 +254,7 @@ let t_of_row' ~record_name ~lds loc =
       [ Ppx_conv_func.Gen_struct.anonymous loc; [%pat?  strings ] ]
       body
   in
-  let name = pvar ~loc @@ record_name ^ "_of_row'" in
+  let name = pvar ~loc (record_name ^ "_of_row'") in
   [%stri let [%p name] = [%e func] ]
 
 let csv_record ~tps:_ ~record_name loc lds =
@@ -269,7 +264,7 @@ let csv_record ~tps:_ ~record_name loc lds =
   let rev_csv_header' = rev_csv_header' ~lds loc in
   let rev_csv_header_spec' = rev_csv_header_spec' ~lds loc in
   let t =
-    if record_name <> "t" then
+    if String.(<>) record_name "t" then
       [%str type t = [%t ptyp_constr ~loc (Located.lident ~loc record_name) [] ] ]
     else
       [%str
