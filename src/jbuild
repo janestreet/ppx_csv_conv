@@ -5,3 +5,5 @@
   (ppx_runtime_libraries (csvfields))
   (libraries (ppx_core ppx_type_conv ppx_conv_func))
   (preprocess (pps (ppx_metaquot)))))
+
+(jbuild_version jane_street)
