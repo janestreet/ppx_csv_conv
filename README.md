@@ -1,3 +1,8 @@
+---
+title: ppx_csv_conv
+parent: ../README.md
+---
+
 Generate functions to read/write records in csv format.
 
 `ppx_csv_conv` generates functions to output some records as a csv

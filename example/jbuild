@@ -1,7 +1,7 @@
 (library
  ((name ppx_csv_conv_test)
   (libraries (core csvfields))
-  (preprocess (pps (ppx_jane ppx_csv_conv)))
+  (preprocess (pps (ppx_jane ppx_csv_conv ppx_driver.runner)))
 )
 )
 
