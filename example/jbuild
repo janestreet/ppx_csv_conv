@@ -7,4 +7,4 @@
 
 (alias ((name DEFAULT) (deps (example.ml.pp example.mli.pp))))
 
-(jbuild_version jane_street)
+(jbuild_version 1)
