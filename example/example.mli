@@ -5,4 +5,4 @@ type t = {
   b : string;
   c : int;
   d : Date.t;
-} [@@deriving csv, fields]
+} [@@deriving fields, csv]

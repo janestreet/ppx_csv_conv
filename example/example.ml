@@ -10,7 +10,7 @@ type t = {
   b : string;
   c : int;
   d : Date.t;
-} [@@deriving csv, fields, compare, sexp]
+} [@@deriving fields, csv, compare, sexp]
 
 let%test_unit _ =
   let actual = csv_load "test.csv" in

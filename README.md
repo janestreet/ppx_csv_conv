@@ -12,13 +12,13 @@ csv file or a database query.
 Usage
 -----
 
-Annotate the type: [@@deriving csv, fields]
+Annotate the type: [@@deriving fields, csv]
 
 ```ocaml
 type t = {
   field : ...
   ....
-} [@@deriving csv, fields]
+} [@@deriving fields, csv]
 ```
 
 Csv uses fields so fields is also required. Now the functions listed
@@ -41,7 +41,7 @@ type t = {
   b : string;
   c : int;
   e : Date.t;
-} [@@deriving csv, fields]
+} [@@deriving fields, csv]
 ```
 
 Generate code/functions with types:
