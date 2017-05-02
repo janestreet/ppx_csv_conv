@@ -307,13 +307,14 @@ let csv_record ~tps:_ ~record_name loc lds =
   [st]
 ;;
 
-let () =
+let csv =
   let str_type_decl =
     Type_conv.Generator.make
       Type_conv.Args.empty
       (Ppx_conv_func.Gen_struct.generate
          ~extension_name
          ~record:csv_record)
+      ~deps:[Ppx_fields_conv.fields]
   in
   let sig_type_decl =
     Type_conv.Generator.make
@@ -328,5 +329,4 @@ let () =
     extension_name
     ~str_type_decl
     ~sig_type_decl
-  |> Type_conv.ignore
 ;;

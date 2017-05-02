@@ -14,6 +14,7 @@ depends: [
   "ppx_conv_func"
   "ppx_core"
   "ppx_driver"
+  "ppx_fields_conv"
   "ppx_metaquot"
   "ppx_type_conv"
   "ocaml-migrate-parsetree" {>= "0.4"}
