@@ -1,6 +1,6 @@
-open Ppx_core
+open Base
+open Ppxlib
 open Ast_builder.Default
-open Ppx_type_conv.Std
 
 let extension_name = "csv"
 let unsupported_type_error_msg ~name =
@@ -309,23 +309,23 @@ let csv_record ~tps:_ ~record_name loc lds =
 
 let csv =
   let str_type_decl =
-    Type_conv.Generator.make
-      Type_conv.Args.empty
+    Deriving.Generator.make
+      Deriving.Args.empty
       (Ppx_conv_func.Gen_struct.generate
          ~extension_name
          ~record:csv_record)
       ~deps:[Ppx_fields_conv.fields]
   in
   let sig_type_decl =
-    Type_conv.Generator.make
-      Type_conv.Args.empty
+    Deriving.Generator.make
+      Deriving.Args.empty
       (Ppx_conv_func.Gen_sig.generate
          ~extension_name
          ~nil:   (fun ~tps:_ ~record_name loc     -> csv_record_sig loc ~record_name)
          ~record:(fun ~tps:_ ~record_name loc _   -> csv_record_sig loc ~record_name)
       )
   in
-  Type_conv.add
+  Deriving.add
     extension_name
     ~str_type_decl
     ~sig_type_decl
