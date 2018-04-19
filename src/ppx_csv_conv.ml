@@ -199,7 +199,8 @@ let csv_record_sig loc ~record_name =
       (include_infos ~loc
          (pmty_with ~loc (pmty_ident ~loc (Located.lident ~loc "Csvfields.Csv.Csvable"))
             [ Pwith_typesubst
-                (type_declaration ~loc ~name:(Located.mk ~loc "t")
+                (Located.lident ~loc "t",
+                 type_declaration ~loc ~name:(Located.mk ~loc "t")
                    ~params:[]
                    ~manifest:(Some
                                 (ptyp_constr ~loc (Located.lident ~loc record_name) []))
@@ -274,7 +275,8 @@ let csv_record ~tps:_ ~record_name loc lds =
   in
   let with_constraints =
     [ Pwith_typesubst
-        (type_declaration ~loc ~name:(Located.mk ~loc "t")
+        (Located.lident ~loc "t",
+         type_declaration ~loc ~name:(Located.mk ~loc "t")
            ~manifest:(Some (ptyp_constr ~loc (Located.lident ~loc record_name) []))
            ~kind:Ptype_abstract
            ~private_:Public
