@@ -1,4 +1,4 @@
-open Core
+open! Core
 
 module Date = struct
   include Date
