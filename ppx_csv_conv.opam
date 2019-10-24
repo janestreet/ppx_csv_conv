@@ -15,7 +15,7 @@ depends: [
   "csvfields"
   "ppx_conv_func"
   "ppx_fields_conv"
-  "dune"            {build & >= "1.5.1"}
+  "dune"            {>= "1.5.1"}
   "ppxlib"          {>= "0.9.0"}
 ]
 synopsis: "Generate functions to read/write records in csv format"
