@@ -304,8 +304,7 @@ let csv_record ~tps:_ ~record_name loc lds =
       (pmod_ident ~loc (Located.lident ~loc "Csvfields.Csv.Record"))
       (pmod_structure
          ~loc
-         (t
-          @ [ is_csv_atom; rev_csv_header'; rev_csv_header_spec'; t_of_row'; row_of_t' ]))
+         (t @ [ is_csv_atom; rev_csv_header'; rev_csv_header_spec'; t_of_row'; row_of_t' ]))
   in
   let st =
     pstr_include
