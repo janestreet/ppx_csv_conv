@@ -213,10 +213,11 @@ let csv_record_sig loc ~record_name =
   [ st ]
 ;;
 
-let rev_csv_header' ~lds loc =
+let rev_csv_header' ~record_name ~lds loc =
   let name = [%pat? rev_csv_header'] in
   let conversion_of_type = Rev_headers.conversion_of_type in
   Ppx_conv_func.Gen_struct.generate_using_fold
+    ~record_name
     ~pass_acc:true
     ~pass_anonymous:true
     ~conversion_of_type
@@ -225,10 +226,11 @@ let rev_csv_header' ~lds loc =
     loc
 ;;
 
-let rev_csv_header_spec' ~lds loc =
+let rev_csv_header_spec' ~record_name ~lds loc =
   let name = [%pat? rev_csv_header_spec'] in
   let conversion_of_type = Spec_of_headers.conversion_of_type in
   Ppx_conv_func.Gen_struct.generate_using_fold
+    ~record_name
     ~pass_acc:true
     ~pass_anonymous:true
     ~conversion_of_type
@@ -237,8 +239,22 @@ let rev_csv_header_spec' ~lds loc =
     loc
 ;;
 
+let fields_module ~record_name ~loc ~suffix =
+  Ast_helper.Exp.ident
+    { loc
+    ; txt =
+        Longident.parse
+          (Printf.sprintf
+             "%s.%s"
+             (match String.equal record_name "t" with
+              | true -> "Fields"
+              | false -> Printf.sprintf "Fields_of_%s" record_name)
+             suffix)
+    }
+;;
+
 let row_of_t' ~record_name ~lds loc =
-  let init = [%expr Fields.Direct.iter t] in
+  let init = [%expr [%e fields_module ~record_name ~loc ~suffix:"Direct.iter"] t] in
   let body =
     Ppx_conv_func.Gen_struct.make_body
       ~lds
@@ -253,12 +269,13 @@ let row_of_t' ~record_name ~lds loc =
   let func =
     [%expr fun ~is_first ~is_last ~writer [%p anonymous] [%p anonymous] t -> [%e body]]
   in
-  let name = pvar ~loc ("write_row_of_" ^ record_name ^ "'") in
-  [%stri let [%p name] = [%e func]]
+  [%stri let write_row_of_t' = [%e func]]
 ;;
 
 let t_of_row' ~record_name ~lds loc =
-  let init = [%expr Fields.make_creator strings] in
+  let init =
+    [%expr [%e fields_module ~record_name ~loc ~suffix:"make_creator"] strings]
+  in
   let body =
     let f = Type_of_csv_row.conversion_of_type in
     Ppx_conv_func.Gen_struct.make_body ~lds ~init loc f
@@ -269,16 +286,15 @@ let t_of_row' ~record_name ~lds loc =
       [ Ppx_conv_func.Gen_struct.anonymous loc; [%pat? strings] ]
       body
   in
-  let name = pvar ~loc (record_name ^ "_of_row'") in
-  [%stri let [%p name] = [%e func]]
+  [%stri let t_of_row' = [%e func]]
 ;;
 
 let csv_record ~tps:_ ~record_name loc lds =
   let t_of_row' = t_of_row' ~record_name ~lds loc in
   let is_csv_atom = [%stri let is_csv_atom = false] in
   let row_of_t' = row_of_t' ~record_name ~lds loc in
-  let rev_csv_header' = rev_csv_header' ~lds loc in
-  let rev_csv_header_spec' = rev_csv_header_spec' ~lds loc in
+  let rev_csv_header' = rev_csv_header' ~record_name ~lds loc in
+  let rev_csv_header_spec' = rev_csv_header_spec' ~record_name ~lds loc in
   let t =
     if String.( <> ) record_name "t"
     then [%str type t = [%t ptyp_constr ~loc (Located.lident ~loc record_name) []]]
@@ -319,7 +335,12 @@ let csv_record ~tps:_ ~record_name loc lds =
                (pmty_ident ~loc (Located.lident ~loc "Csvfields.Csv.Csvable"))
                with_constraints)))
   in
-  [ st ]
+  [ st
+  ; [%stri let [%p pvar ~loc (record_name ^ "_of_row")] = t_of_row]
+  ; [%stri let [%p pvar ~loc ("row_of_" ^ record_name)] = row_of_t]
+  ; [%stri let [%p pvar ~loc (record_name ^ "_of_row'")] = t_of_row']
+  ; [%stri let [%p pvar ~loc ("write_row_of_" ^ record_name ^ "'")] = write_row_of_t']
+  ]
 ;;
 
 let csv =

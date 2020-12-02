@@ -1,0 +1,290 @@
+;;
+#verbose true
+
+open! Core
+
+(* From issue described by pveber, Mar 13th 2018:
+   https://github.com/janestreet/ppx_csv_conv/issues/1#issuecomment-372721080
+*)
+
+module M_t = struct
+  type t =
+    { id : string
+    ; count : int
+    }
+  [@@deriving fields, csv]
+end
+
+[%%expect
+  {|
+module M_t :
+  sig
+    type t = { id : string; count : int; }
+    val count : t -> int
+    val id : t -> string
+    module Fields :
+      sig
+        val names : string list
+        val count : ([< `Read | `Set_and_create ], t, int) Field.t_with_perm
+        val id : ([< `Read | `Set_and_create ], t, string) Field.t_with_perm
+        val make_creator :
+          id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              'a -> ('b -> string) * 'c) ->
+          count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 'c -> ('b -> int) * 'd) ->
+          'a -> ('b -> t) * 'd
+        val create : id:string -> count:int -> t
+        val map :
+          id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              string) ->
+          count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 int) ->
+          t
+        val iter :
+          id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              unit) ->
+          count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 unit) ->
+          unit
+        val fold :
+          init:'a ->
+          id:('a ->
+              ([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              'b) ->
+          count:('b ->
+                 ([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 'c) ->
+          'c
+        val map_poly :
+          ([< `Read | `Set_and_create ], t, 'a) Field.user -> 'a list
+        val for_all :
+          id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              bool) ->
+          count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 bool) ->
+          bool
+        val exists :
+          id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              bool) ->
+          count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 bool) ->
+          bool
+        val to_list :
+          id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              'a) ->
+          count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 'a) ->
+          'a list
+        module Direct :
+          sig
+            val iter :
+              t ->
+              id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+                  t -> string -> unit) ->
+              count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                     t -> int -> 'a) ->
+              'a
+            val fold :
+              t ->
+              init:'a ->
+              id:('a ->
+                  ([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+                  t -> string -> 'b) ->
+              count:('b ->
+                     ([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                     t -> int -> 'c) ->
+              'c
+            val for_all :
+              t ->
+              id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+                  t -> string -> bool) ->
+              count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                     t -> int -> bool) ->
+              bool
+            val exists :
+              t ->
+              id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+                  t -> string -> bool) ->
+              count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                     t -> int -> bool) ->
+              bool
+            val to_list :
+              t ->
+              id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+                  t -> string -> 'a) ->
+              count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                     t -> int -> 'a) ->
+              'a list
+            val map :
+              t ->
+              id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+                  t -> string -> string) ->
+              count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                     t -> int -> int) ->
+              t
+            val set_all_mutable_fields : 'a -> unit
+          end
+      end
+    val is_csv_atom : bool
+    val rev_csv_header' : string list -> 'a -> 'b -> string list
+    val rev_csv_header_spec' :
+      Csvfields.Csv.Spec.t list -> 'a -> 'b -> Csvfields.Csv.Spec.t list
+    val csv_header : string list
+    val csv_header_spec : Csvfields.Csv.Spec.t list
+    val csv_load : ?separator:char -> string -> t list
+    val csv_load_in : ?separator:char -> in_channel -> t list
+    val csv_save_fn : ?separator:char -> (string -> unit) -> t list -> unit
+    val csv_save_out : ?separator:char -> out_channel -> t list -> unit
+    val csv_save : ?separator:char -> string -> t list -> unit
+    val t_of_row : string list -> t
+    val row_of_t : t -> string list
+    val t_of_row' : 'a -> string list -> (unit -> t) * string list
+    val write_row_of_t' :
+      is_first:bool ->
+      is_last:bool -> writer:(string -> unit) -> 'a -> 'b -> t -> unit
+  end
+|}]
+
+module M_u = struct
+  type u =
+    { id : string
+    ; count : int
+    }
+  [@@deriving fields, csv]
+end
+
+[%%expect
+  {|
+module M_u :
+  sig
+    type u = { id : string; count : int; }
+    val count : u -> int
+    val id : u -> string
+    module Fields_of_u :
+      sig
+        val names : string list
+        val count : ([< `Read | `Set_and_create ], u, int) Field.t_with_perm
+        val id : ([< `Read | `Set_and_create ], u, string) Field.t_with_perm
+        val make_creator :
+          id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              'a -> ('b -> string) * 'c) ->
+          count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 'c -> ('b -> int) * 'd) ->
+          'a -> ('b -> u) * 'd
+        val create : id:string -> count:int -> u
+        val map :
+          id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              string) ->
+          count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 int) ->
+          u
+        val iter :
+          id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              unit) ->
+          count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 unit) ->
+          unit
+        val fold :
+          init:'a ->
+          id:('a ->
+              ([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              'b) ->
+          count:('b ->
+                 ([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 'c) ->
+          'c
+        val map_poly :
+          ([< `Read | `Set_and_create ], u, 'a) Field.user -> 'a list
+        val for_all :
+          id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              bool) ->
+          count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 bool) ->
+          bool
+        val exists :
+          id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              bool) ->
+          count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 bool) ->
+          bool
+        val to_list :
+          id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              'a) ->
+          count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 'a) ->
+          'a list
+        module Direct :
+          sig
+            val iter :
+              u ->
+              id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+                  u -> string -> unit) ->
+              count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                     u -> int -> 'a) ->
+              'a
+            val fold :
+              u ->
+              init:'a ->
+              id:('a ->
+                  ([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+                  u -> string -> 'b) ->
+              count:('b ->
+                     ([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                     u -> int -> 'c) ->
+              'c
+            val for_all :
+              u ->
+              id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+                  u -> string -> bool) ->
+              count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                     u -> int -> bool) ->
+              bool
+            val exists :
+              u ->
+              id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+                  u -> string -> bool) ->
+              count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                     u -> int -> bool) ->
+              bool
+            val to_list :
+              u ->
+              id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+                  u -> string -> 'a) ->
+              count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                     u -> int -> 'a) ->
+              'a list
+            val map :
+              u ->
+              id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+                  u -> string -> string) ->
+              count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                     u -> int -> int) ->
+              u
+            val set_all_mutable_fields : 'a -> unit
+          end
+      end
+    val is_csv_atom : bool
+    val rev_csv_header' : string list -> 'a -> 'b -> string list
+    val rev_csv_header_spec' :
+      Csvfields.Csv.Spec.t list -> 'a -> 'b -> Csvfields.Csv.Spec.t list
+    val t_of_row' : 'a -> string list -> (unit -> u) * string list
+    val write_row_of_t' :
+      is_first:bool ->
+      is_last:bool -> writer:(string -> unit) -> 'a -> 'b -> u -> unit
+    val csv_header : string list
+    val csv_header_spec : Csvfields.Csv.Spec.t list
+    val t_of_row : string list -> u
+    val row_of_t : u -> string list
+    val csv_load : ?separator:char -> string -> u list
+    val csv_load_in : ?separator:char -> in_channel -> u list
+    val csv_save_fn : ?separator:char -> (string -> unit) -> u list -> unit
+    val csv_save_out : ?separator:char -> out_channel -> u list -> unit
+    val csv_save : ?separator:char -> string -> u list -> unit
+    val u_of_row : string list -> u
+    val row_of_u : u -> string list
+    val u_of_row' : 'a -> string list -> (unit -> u) * string list
+    val write_row_of_u' :
+      is_first:bool ->
+      is_last:bool -> writer:(string -> unit) -> 'a -> 'b -> u -> unit
+  end
+|}]
