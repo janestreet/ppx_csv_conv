@@ -298,8 +298,10 @@ let csv_record ~tps:_ ~record_name loc lds =
   let t =
     if String.( <> ) record_name "t"
     then [%str type t = [%t ptyp_constr ~loc (Located.lident ~loc record_name) []]]
-    else [%str type _t = t
-      type t = _t]
+    else
+      [%str
+        type _t = t
+        type t = _t]
   in
   let with_constraints =
     [ Pwith_typesubst
