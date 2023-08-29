@@ -11,7 +11,8 @@ type t =
   ; c : int
   ; d : Date.t
   }
-[@@deriving fields, csv, compare, sexp]
+[@@deriving
+  fields ~iterators:(make_creator, fold) ~direct_iterators:iter, csv, compare, sexp]
 
 let%test_unit _ =
   let actual = csv_load "test.csv" in

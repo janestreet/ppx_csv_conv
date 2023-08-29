@@ -11,7 +11,26 @@ module M_t = struct
     { id : string
     ; count : int
     }
-  [@@deriving fields, csv]
+  [@@deriving
+    fields
+      ~getters
+      ~setters
+      ~names
+      ~fields
+      ~iterators:
+        ( create
+        , make_creator
+        , exists
+        , fold
+        , fold_right
+        , for_all
+        , iter
+        , map
+        , to_list
+        , map_poly )
+      ~direct_iterators:
+        (exists, fold, fold_right, for_all, iter, map, to_list, set_all_mutable_fields)
+  , csv]
 end
 
 [%%expect
@@ -74,6 +93,12 @@ module M_t :
           count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
                  'a) ->
           'a list
+        val fold_right :
+          id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              'a -> 'b) ->
+          count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 'c -> 'a) ->
+          init:'c -> 'b
         module Direct :
           sig
             val iter :
@@ -114,6 +139,13 @@ module M_t :
               count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
                      t -> int -> 'a) ->
               'a list
+            val fold_right :
+              t ->
+              id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+                  t -> string -> 'a -> 'b) ->
+              count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                     t -> int -> 'c -> 'a) ->
+              init:'c -> 'b
             val map :
               t ->
               id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
@@ -149,7 +181,26 @@ module M_u = struct
     { id : string
     ; count : int
     }
-  [@@deriving fields, csv]
+  [@@deriving
+    fields
+      ~getters
+      ~setters
+      ~names
+      ~fields
+      ~iterators:
+        ( create
+        , make_creator
+        , exists
+        , fold
+        , fold_right
+        , for_all
+        , iter
+        , map
+        , to_list
+        , map_poly )
+      ~direct_iterators:
+        (exists, fold, fold_right, for_all, iter, map, to_list, set_all_mutable_fields)
+  , csv]
 end
 
 [%%expect
@@ -212,6 +263,12 @@ module M_u :
           count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
                  'a) ->
           'a list
+        val fold_right :
+          id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              'a -> 'b) ->
+          count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 'c -> 'a) ->
+          init:'c -> 'b
         module Direct :
           sig
             val iter :
@@ -252,6 +309,13 @@ module M_u :
               count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
                      u -> int -> 'a) ->
               'a list
+            val fold_right :
+              u ->
+              id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+                  u -> string -> 'a -> 'b) ->
+              count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                     u -> int -> 'c -> 'a) ->
+              init:'c -> 'b
             val map :
               u ->
               id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->

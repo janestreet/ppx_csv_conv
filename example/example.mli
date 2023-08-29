@@ -6,4 +6,4 @@ type t =
   ; c : int
   ; d : Date.t
   }
-[@@deriving fields, csv]
+[@@deriving csv]
