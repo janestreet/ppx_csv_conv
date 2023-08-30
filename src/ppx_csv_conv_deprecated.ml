@@ -22,95 +22,95 @@ let edot ~loc path_opt id =
 
 (** Generate the list of fields contained in a flattened record type *)
 module Rev_headers = Ppx_conv_func.Of_simple (struct
-    let unsupported_type_error_msg = unsupported_type_error_msg
-    let conversion_name = extension_name
+  let unsupported_type_error_msg = unsupported_type_error_msg
+  let conversion_name = extension_name
 
-    let function_name = function
-      | None -> "rev_csv_header'"
-      | Some param -> Printf.sprintf "rev_csv_header_of_%s'" param
-    ;;
+  let function_name = function
+    | None -> "rev_csv_header'"
+    | Some param -> Printf.sprintf "rev_csv_header_of_%s'" param
+  ;;
 
-    let atoms loc ~field_name = [%expr fun acc _ -> [%e estring ~loc field_name] :: acc]
-    let merge_recursive = useless_merge_recursive
+  let atoms loc ~field_name = [%expr fun acc _ -> [%e estring ~loc field_name] :: acc]
+  let merge_recursive = useless_merge_recursive
 
-    let recursive loc ~field_name ~type_name:_ ~path =
-      let tns = function_name None in
-      let recursive = edot ~loc path tns in
-      let is_csv_atom = edot ~loc path "is_csv_atom" in
-      [%expr
-        fun acc _ ->
-          if [%e is_csv_atom]
-          then [%e estring ~loc field_name] :: acc
-          else [%e recursive] acc () ()]
-    ;;
-  end)
+  let recursive loc ~field_name ~type_name:_ ~path =
+    let tns = function_name None in
+    let recursive = edot ~loc path tns in
+    let is_csv_atom = edot ~loc path "is_csv_atom" in
+    [%expr
+      fun acc _ ->
+        if [%e is_csv_atom]
+        then [%e estring ~loc field_name] :: acc
+        else [%e recursive] acc () ()]
+  ;;
+end)
 
 (* Generate the specification of the headers as a tree. This is useful to generate headers
    consisting of multiple rows, each field grouping those below. *)
 module Spec_of_headers = Ppx_conv_func.Of_simple (struct
-    let unsupported_type_error_msg = unsupported_type_error_msg
-    let conversion_name = extension_name
+  let unsupported_type_error_msg = unsupported_type_error_msg
+  let conversion_name = extension_name
 
-    let function_name = function
-      | None -> "rev_csv_header_spec'"
-      | Some param -> Printf.sprintf "rev_csv_header_spec_of_%s'" param
-    ;;
+  let function_name = function
+    | None -> "rev_csv_header_spec'"
+    | Some param -> Printf.sprintf "rev_csv_header_spec_of_%s'" param
+  ;;
 
-    let atoms loc ~field_name =
-      [%expr fun acc _ -> Csvfields.Csv.Spec.Leaf [%e estring ~loc field_name] :: acc]
-    ;;
+  let atoms loc ~field_name =
+    [%expr fun acc _ -> Csvfields.Csv.Spec.Leaf [%e estring ~loc field_name] :: acc]
+  ;;
 
-    let merge_recursive = useless_merge_recursive
+  let merge_recursive = useless_merge_recursive
 
-    let recursive loc ~field_name ~type_name:_ ~path =
-      let tns = function_name None in
-      let recursive = edot ~loc path tns in
-      let is_csv_atom = edot ~loc path "is_csv_atom" in
-      [%expr
-        fun acc _ ->
-          if [%e is_csv_atom]
-          then Csvfields.Csv.Spec.Leaf [%e estring ~loc field_name] :: acc
-          else
-            Csvfields.Csv.Spec.Tree ([%e estring ~loc field_name], [%e recursive] [] () ())
-            :: acc]
-    ;;
-  end)
+  let recursive loc ~field_name ~type_name:_ ~path =
+    let tns = function_name None in
+    let recursive = edot ~loc path tns in
+    let is_csv_atom = edot ~loc path "is_csv_atom" in
+    [%expr
+      fun acc _ ->
+        if [%e is_csv_atom]
+        then Csvfields.Csv.Spec.Leaf [%e estring ~loc field_name] :: acc
+        else
+          Csvfields.Csv.Spec.Tree ([%e estring ~loc field_name], [%e recursive] [] () ())
+          :: acc]
+  ;;
+end)
 
 (** Generate the some type using a csv row (a list of strings) *)
 module Type_of_csv_row = Ppx_conv_func.Of_complete (struct
-    let unsupported_type_error_msg = unsupported_type_error_msg
-    let conversion_name = extension_name
+  let unsupported_type_error_msg = unsupported_type_error_msg
+  let conversion_name = extension_name
 
-    let function_name = function
-      | None -> failwith "Csv conversion of_row requires some name"
-      | Some param -> Printf.sprintf "%s_of_row'" param
-    ;;
+  let function_name = function
+    | None -> failwith "Csv conversion of_row requires some name"
+    | Some param -> Printf.sprintf "%s_of_row'" param
+  ;;
 
-    let unit loc ~field_name:_ = [%expr Csvfields.Csv.unit_of_row]
-    let bool loc ~field_name:_ = [%expr Csvfields.Csv.bool_of_row]
-    let string loc ~field_name:_ = [%expr Csvfields.Csv.string_of_row]
-    let char loc ~field_name:_ = [%expr Csvfields.Csv.char_of_row]
-    let int loc ~field_name:_ = [%expr Csvfields.Csv.int_of_row]
-    let float loc ~field_name:_ = [%expr Csvfields.Csv.float_of_row]
-    let int32 loc ~field_name:_ = [%expr Csvfields.Csv.int32_of_row]
-    let int64 loc ~field_name:_ = [%expr Csvfields.Csv.int64_of_row]
-    let nativeint loc ~field_name:_ = [%expr Csvfields.Csv.nativeint_of_row]
-    let big_int loc ~field_name:_ = [%expr Csvfields.Csv.big_int_of_row]
-    let nat loc ~field_name:_ = [%expr Csvfields.Csv.nat_of_row]
-    let num loc ~field_name:_ = [%expr Csvfields.Csv.num_of_row]
-    let ratio loc ~field_name:_ = [%expr Csvfields.Csv.ratio_of_row]
-    let list loc ~field_name:_ = Ppx_conv_func.raise_unsupported ~loc "list"
-    let array loc ~field_name:_ = Ppx_conv_func.raise_unsupported ~loc "list"
-    let option loc ~field_name:_ = Ppx_conv_func.raise_unsupported ~loc "option"
-    let lazy_t loc ~field_name:_ = Ppx_conv_func.raise_unsupported ~loc "lazy_t"
-    let ref loc ~field_name:_ = Ppx_conv_func.raise_unsupported ~loc "ref"
-    let merge_recursive = useless_merge_recursive
+  let unit loc ~field_name:_ = [%expr Csvfields.Csv.unit_of_row]
+  let bool loc ~field_name:_ = [%expr Csvfields.Csv.bool_of_row]
+  let string loc ~field_name:_ = [%expr Csvfields.Csv.string_of_row]
+  let char loc ~field_name:_ = [%expr Csvfields.Csv.char_of_row]
+  let int loc ~field_name:_ = [%expr Csvfields.Csv.int_of_row]
+  let float loc ~field_name:_ = [%expr Csvfields.Csv.float_of_row]
+  let int32 loc ~field_name:_ = [%expr Csvfields.Csv.int32_of_row]
+  let int64 loc ~field_name:_ = [%expr Csvfields.Csv.int64_of_row]
+  let nativeint loc ~field_name:_ = [%expr Csvfields.Csv.nativeint_of_row]
+  let big_int loc ~field_name:_ = [%expr Csvfields.Csv.big_int_of_row]
+  let nat loc ~field_name:_ = [%expr Csvfields.Csv.nat_of_row]
+  let num loc ~field_name:_ = [%expr Csvfields.Csv.num_of_row]
+  let ratio loc ~field_name:_ = [%expr Csvfields.Csv.ratio_of_row]
+  let list loc ~field_name:_ = Ppx_conv_func.raise_unsupported ~loc "list"
+  let array loc ~field_name:_ = Ppx_conv_func.raise_unsupported ~loc "list"
+  let option loc ~field_name:_ = Ppx_conv_func.raise_unsupported ~loc "option"
+  let lazy_t loc ~field_name:_ = Ppx_conv_func.raise_unsupported ~loc "lazy_t"
+  let ref loc ~field_name:_ = Ppx_conv_func.raise_unsupported ~loc "ref"
+  let merge_recursive = useless_merge_recursive
 
-    let recursive loc ~field_name:_ ~type_name ~path =
-      let tns = function_name (Some type_name) in
-      edot ~loc path tns
-    ;;
-  end)
+  let recursive loc ~field_name:_ ~type_name ~path =
+    let tns = function_name (Some type_name) in
+    edot ~loc path tns
+  ;;
+end)
 
 module type B = sig
   val writer : Location.t -> arg_label * expression
@@ -165,28 +165,28 @@ end
 let falseexpr loc = [%expr false]
 
 module Unique_row_of = Ppx_conv_func.Of_complete (Make_row_of (struct
-                                                    let writer loc = Labelled "writer", [%expr writer]
-                                                    let is_first loc = Labelled "is_first", [%expr is_first]
-                                                    let is_last loc = Labelled "is_last", [%expr is_last]
-                                                  end))
+  let writer loc = Labelled "writer", [%expr writer]
+  let is_first loc = Labelled "is_first", [%expr is_first]
+  let is_last loc = Labelled "is_last", [%expr is_last]
+end))
 
 module First_row_of = Ppx_conv_func.Of_complete (Make_row_of (struct
-                                                   let writer loc = Labelled "writer", [%expr writer]
-                                                   let is_first loc = Labelled "is_first", [%expr is_first]
-                                                   let is_last loc = Labelled "is_last", falseexpr loc
-                                                 end))
+  let writer loc = Labelled "writer", [%expr writer]
+  let is_first loc = Labelled "is_first", [%expr is_first]
+  let is_last loc = Labelled "is_last", falseexpr loc
+end))
 
 module Middle_row_of = Ppx_conv_func.Of_complete (Make_row_of (struct
-                                                    let writer loc = Labelled "writer", [%expr writer]
-                                                    let is_first loc = Labelled "is_first", falseexpr loc
-                                                    let is_last loc = Labelled "is_last", falseexpr loc
-                                                  end))
+  let writer loc = Labelled "writer", [%expr writer]
+  let is_first loc = Labelled "is_first", falseexpr loc
+  let is_last loc = Labelled "is_last", falseexpr loc
+end))
 
 module Last_row_of = Ppx_conv_func.Of_complete (Make_row_of (struct
-                                                  let writer loc = Labelled "writer", [%expr writer]
-                                                  let is_first loc = Labelled "is_first", falseexpr loc
-                                                  let is_last loc = Labelled "is_last", [%expr is_last]
-                                                end))
+  let writer loc = Labelled "writer", [%expr writer]
+  let is_first loc = Labelled "is_first", falseexpr loc
+  let is_last loc = Labelled "is_last", [%expr is_last]
+end))
 
 let csv_record_sig loc ~record_name =
   let st =
