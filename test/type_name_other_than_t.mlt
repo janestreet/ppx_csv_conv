@@ -38,8 +38,10 @@ end
 module M_t :
   sig
     type t = { id : string; count : int; }
-    val count : t -> int [@@zero_alloc]
-    val id : t -> string [@@zero_alloc]
+    val count : t -> int
+      [@@zero_alloc custom_error_message "Hint: add [@@fields.no_zero_alloc] to disable the zero-alloc guarantees that [@@deriving fields] tries to make by default."]
+    val id : t -> string
+      [@@zero_alloc custom_error_message "Hint: add [@@fields.no_zero_alloc] to disable the zero-alloc guarantees that [@@deriving fields] tries to make by default."]
     module Fields :
       sig
         val names : string list
@@ -173,7 +175,8 @@ module M_t :
               (([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
                t -> int -> int) ->
               t
-            val set_all_mutable_fields : local_ 'a -> unit [@@zero_alloc]
+            val set_all_mutable_fields : local_ 'a -> unit
+              [@@zero_alloc custom_error_message "Hint: add [@@fields.no_zero_alloc] to disable the zero-alloc guarantees that [@@deriving fields] tries to make by default."]
           end
       end
     val is_csv_atom : bool
@@ -228,8 +231,10 @@ end
 module M_u :
   sig
     type u = { id : string; count : int; }
-    val count : u -> int [@@zero_alloc]
-    val id : u -> string [@@zero_alloc]
+    val count : u -> int
+      [@@zero_alloc custom_error_message "Hint: add [@@fields.no_zero_alloc] to disable the zero-alloc guarantees that [@@deriving fields] tries to make by default."]
+    val id : u -> string
+      [@@zero_alloc custom_error_message "Hint: add [@@fields.no_zero_alloc] to disable the zero-alloc guarantees that [@@deriving fields] tries to make by default."]
     module Fields_of_u :
       sig
         val names : string list
@@ -363,7 +368,8 @@ module M_u :
               (([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
                u -> int -> int) ->
               u
-            val set_all_mutable_fields : local_ 'a -> unit [@@zero_alloc]
+            val set_all_mutable_fields : local_ 'a -> unit
+              [@@zero_alloc custom_error_message "Hint: add [@@fields.no_zero_alloc] to disable the zero-alloc guarantees that [@@deriving fields] tries to make by default."]
           end
       end
     val is_csv_atom : bool
