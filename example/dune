@@ -5,5 +5,5 @@
   (pps ppx_jane ppx_csv_conv_deprecated)))
 
 (alias
- (name DEFAULT)
+ (name default)
  (deps example.ml.pp example.mli.pp))
