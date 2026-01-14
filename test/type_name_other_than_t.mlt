@@ -55,127 +55,107 @@ module M_t :
           'a -> ('b -> t) * 'd
         val create : id:string -> count:int -> t
         val map :
-          id:local_
-          (([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
-           string) ->
-          count:local_
-          (([< `Read | `Set_and_create ], t, int) Field.t_with_perm -> int) ->
+          id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              string) @ local ->
+          count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 int) @ local ->
           t
         val iter :
-          id:local_
-          (([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
-           unit) ->
-          count:local_
-          (([< `Read | `Set_and_create ], t, int) Field.t_with_perm -> unit) ->
+          id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              unit) @ local ->
+          count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 unit) @ local ->
           unit
         val fold :
           init:'a ->
-          id:local_
-          ('a ->
-           ([< `Read | `Set_and_create ], t, string) Field.t_with_perm -> 'b) ->
-          count:local_
-          ('b ->
-           ([< `Read | `Set_and_create ], t, int) Field.t_with_perm -> 'c) ->
+          id:('a ->
+              ([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              'b) @ local ->
+          count:('b ->
+                 ([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 'c) @ local ->
           'c
         val map_poly :
-          local_ ([< `Read | `Set_and_create ], t, 'a) Field.user -> 'a list
+          ([< `Read | `Set_and_create ], t, 'a) Field.user @ local -> 'a list
         val for_all :
-          id:local_
-          (([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
-           bool) ->
-          count:local_
-          (([< `Read | `Set_and_create ], t, int) Field.t_with_perm -> bool) ->
+          id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              bool) @ local ->
+          count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 bool) @ local ->
           bool
         val exists :
-          id:local_
-          (([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
-           bool) ->
-          count:local_
-          (([< `Read | `Set_and_create ], t, int) Field.t_with_perm -> bool) ->
+          id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              bool) @ local ->
+          count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 bool) @ local ->
           bool
         val to_list :
-          id:local_
-          (([< `Read | `Set_and_create ], t, string) Field.t_with_perm -> 'a) ->
-          count:local_
-          (([< `Read | `Set_and_create ], t, int) Field.t_with_perm -> 'a) ->
+          id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              'a) @ local ->
+          count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 'a) @ local ->
           'a list
         val fold_right :
-          id:local_
-          (([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
-           'a -> 'b) ->
-          count:local_
-          (([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
-           'c -> 'a) ->
+          id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+              'a -> 'b) @ local ->
+          count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                 'c -> 'a) @ local ->
           init:'c -> 'b
         module Direct :
           sig
             val iter :
               t ->
-              id:local_
-              (([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
-               t -> string -> unit) ->
-              count:local_
-              (([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
-               t -> int -> 'a) ->
+              id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+                  t -> string -> unit) @ local ->
+              count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                     t -> int -> 'a) @ local ->
               'a
             val fold :
               t ->
               init:'a ->
-              id:local_
-              ('a ->
-               ([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
-               t -> string -> 'b) ->
-              count:local_
-              ('b ->
-               ([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
-               t -> int -> 'c) ->
+              id:('a ->
+                  ([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+                  t -> string -> 'b) @ local ->
+              count:('b ->
+                     ([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                     t -> int -> 'c) @ local ->
               'c
             val for_all :
               t ->
-              id:local_
-              (([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
-               t -> string -> bool) ->
-              count:local_
-              (([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
-               t -> int -> bool) ->
+              id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+                  t -> string -> bool) @ local ->
+              count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                     t -> int -> bool) @ local ->
               bool
             val exists :
               t ->
-              id:local_
-              (([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
-               t -> string -> bool) ->
-              count:local_
-              (([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
-               t -> int -> bool) ->
+              id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+                  t -> string -> bool) @ local ->
+              count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                     t -> int -> bool) @ local ->
               bool
             val to_list :
               t ->
-              id:local_
-              (([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
-               t -> string -> 'a) ->
-              count:local_
-              (([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
-               t -> int -> 'a) ->
+              id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+                  t -> string -> 'a) @ local ->
+              count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                     t -> int -> 'a) @ local ->
               'a list
             val fold_right :
               t ->
-              id:local_
-              (([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
-               t -> string -> 'a -> 'b) ->
-              count:local_
-              (([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
-               t -> int -> 'c -> 'a) ->
+              id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+                  t -> string -> 'a -> 'b) @ local ->
+              count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                     t -> int -> 'c -> 'a) @ local ->
               init:'c -> 'b
             val map :
               t ->
-              id:local_
-              (([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
-               t -> string -> string) ->
-              count:local_
-              (([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
-               t -> int -> int) ->
+              id:(([< `Read | `Set_and_create ], t, string) Field.t_with_perm ->
+                  t -> string -> string) @ local ->
+              count:(([< `Read | `Set_and_create ], t, int) Field.t_with_perm ->
+                     t -> int -> int) @ local ->
               t
-            val set_all_mutable_fields : local_ t -> unit
+            val set_all_mutable_fields : t @ local -> unit
               [@@zero_alloc custom_error_message "Hint: add [@@fields.no_zero_alloc] to disable the zero-alloc guarantees that [@@deriving fields] tries to make by default."]
           end
       end
@@ -248,127 +228,107 @@ module M_u :
           'a -> ('b -> u) * 'd
         val create : id:string -> count:int -> u
         val map :
-          id:local_
-          (([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
-           string) ->
-          count:local_
-          (([< `Read | `Set_and_create ], u, int) Field.t_with_perm -> int) ->
+          id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              string) @ local ->
+          count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 int) @ local ->
           u
         val iter :
-          id:local_
-          (([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
-           unit) ->
-          count:local_
-          (([< `Read | `Set_and_create ], u, int) Field.t_with_perm -> unit) ->
+          id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              unit) @ local ->
+          count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 unit) @ local ->
           unit
         val fold :
           init:'a ->
-          id:local_
-          ('a ->
-           ([< `Read | `Set_and_create ], u, string) Field.t_with_perm -> 'b) ->
-          count:local_
-          ('b ->
-           ([< `Read | `Set_and_create ], u, int) Field.t_with_perm -> 'c) ->
+          id:('a ->
+              ([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              'b) @ local ->
+          count:('b ->
+                 ([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 'c) @ local ->
           'c
         val map_poly :
-          local_ ([< `Read | `Set_and_create ], u, 'a) Field.user -> 'a list
+          ([< `Read | `Set_and_create ], u, 'a) Field.user @ local -> 'a list
         val for_all :
-          id:local_
-          (([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
-           bool) ->
-          count:local_
-          (([< `Read | `Set_and_create ], u, int) Field.t_with_perm -> bool) ->
+          id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              bool) @ local ->
+          count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 bool) @ local ->
           bool
         val exists :
-          id:local_
-          (([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
-           bool) ->
-          count:local_
-          (([< `Read | `Set_and_create ], u, int) Field.t_with_perm -> bool) ->
+          id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              bool) @ local ->
+          count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 bool) @ local ->
           bool
         val to_list :
-          id:local_
-          (([< `Read | `Set_and_create ], u, string) Field.t_with_perm -> 'a) ->
-          count:local_
-          (([< `Read | `Set_and_create ], u, int) Field.t_with_perm -> 'a) ->
+          id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              'a) @ local ->
+          count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 'a) @ local ->
           'a list
         val fold_right :
-          id:local_
-          (([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
-           'a -> 'b) ->
-          count:local_
-          (([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
-           'c -> 'a) ->
+          id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+              'a -> 'b) @ local ->
+          count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                 'c -> 'a) @ local ->
           init:'c -> 'b
         module Direct :
           sig
             val iter :
               u ->
-              id:local_
-              (([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
-               u -> string -> unit) ->
-              count:local_
-              (([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
-               u -> int -> 'a) ->
+              id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+                  u -> string -> unit) @ local ->
+              count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                     u -> int -> 'a) @ local ->
               'a
             val fold :
               u ->
               init:'a ->
-              id:local_
-              ('a ->
-               ([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
-               u -> string -> 'b) ->
-              count:local_
-              ('b ->
-               ([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
-               u -> int -> 'c) ->
+              id:('a ->
+                  ([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+                  u -> string -> 'b) @ local ->
+              count:('b ->
+                     ([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                     u -> int -> 'c) @ local ->
               'c
             val for_all :
               u ->
-              id:local_
-              (([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
-               u -> string -> bool) ->
-              count:local_
-              (([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
-               u -> int -> bool) ->
+              id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+                  u -> string -> bool) @ local ->
+              count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                     u -> int -> bool) @ local ->
               bool
             val exists :
               u ->
-              id:local_
-              (([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
-               u -> string -> bool) ->
-              count:local_
-              (([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
-               u -> int -> bool) ->
+              id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+                  u -> string -> bool) @ local ->
+              count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                     u -> int -> bool) @ local ->
               bool
             val to_list :
               u ->
-              id:local_
-              (([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
-               u -> string -> 'a) ->
-              count:local_
-              (([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
-               u -> int -> 'a) ->
+              id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+                  u -> string -> 'a) @ local ->
+              count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                     u -> int -> 'a) @ local ->
               'a list
             val fold_right :
               u ->
-              id:local_
-              (([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
-               u -> string -> 'a -> 'b) ->
-              count:local_
-              (([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
-               u -> int -> 'c -> 'a) ->
+              id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+                  u -> string -> 'a -> 'b) @ local ->
+              count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                     u -> int -> 'c -> 'a) @ local ->
               init:'c -> 'b
             val map :
               u ->
-              id:local_
-              (([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
-               u -> string -> string) ->
-              count:local_
-              (([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
-               u -> int -> int) ->
+              id:(([< `Read | `Set_and_create ], u, string) Field.t_with_perm ->
+                  u -> string -> string) @ local ->
+              count:(([< `Read | `Set_and_create ], u, int) Field.t_with_perm ->
+                     u -> int -> int) @ local ->
               u
-            val set_all_mutable_fields : local_ u -> unit
+            val set_all_mutable_fields : u @ local -> unit
               [@@zero_alloc custom_error_message "Hint: add [@@fields.no_zero_alloc] to disable the zero-alloc guarantees that [@@deriving fields] tries to make by default."]
           end
       end
