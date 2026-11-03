@@ -12,7 +12,10 @@ type t =
   ; d : Date.t
   }
 [@@deriving
-  fields ~iterators:(make_creator, fold) ~direct_iterators:iter, csv, compare, sexp]
+  fields ~iterators:(make_creator, fold) ~direct_iterators:iter
+  , csv
+  , compare ~localize
+  , sexp]
 
 let%test_unit _ =
   let actual = csv_load "test.csv" in

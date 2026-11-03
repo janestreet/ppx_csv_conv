@@ -2,7 +2,7 @@
  (name ppx_csv_conv_deprecated_test)
  (libraries core csvfields)
  (preprocess
-  (pps ppx_jane ppx_csv_conv_deprecated)))
+  (pps ppx_jane -compare-require-explicit-locality ppx_csv_conv_deprecated)))
 
 (alias
  (name default)
